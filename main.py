@@ -73,7 +73,7 @@ async def roll(ctx,*args):
         modified = modify(mod_sign,mod_val,f[0])
         f[0] = modified
       v.update_val_string()
-      results_embed.add_field(name=f"roll #{str(i+1)}", value=f"{v.val_string}", inline=False)
+      results_embed.add_field(name=f"roll #{str(i+1)}", value=f"{v.val_string} ({build_modified_string(v.original_values, mod_sign,mod_val)})", inline=False)
   await ctx.send(embed=results_embed)
 
 
@@ -101,6 +101,10 @@ def roll_dice(url):
 def modify(sign,modifier,value) -> int:
   return modifier + value if sign == '+' else modifier - value
     
-
+def build_modified_string(originals,sign,value):
+  explanation = ""
+  flat_list = list(chain.from_iterable(originals))
+  for i in flat_list:
+    explanation += f"{i} {sign} {str(value)} "
 
 client.run(my_secret)
