@@ -70,6 +70,7 @@ async def roll(ctx,*args):
       mod_sign = bonuses[i].sign
       mod_val = bonuses[i].value
       originals = v.values
+      print(originals)
       for f in v.values:
         modified = modify(mod_sign,mod_val,f[0])
         f[0] = modified
