@@ -69,11 +69,12 @@ async def roll(ctx,*args):
     else:
       mod_sign = bonuses[i].sign
       mod_val = bonuses[i].value
+      originals = v.values
       for f in v.values:
         modified = modify(mod_sign,mod_val,f[0])
         f[0] = modified
       v.update_val_string()
-      results_embed.add_field(name=f"roll #{str(i+1)}", value=f"{v.val_string} ({build_modified_string(v.original_values, mod_sign,mod_val)})", inline=False)
+      results_embed.add_field(name=f"roll #{str(i+1)}", value=f"{v.val_string} ({build_modified_string(originals, mod_sign,mod_val)})", inline=False)
   await ctx.send(embed=results_embed)
 
 
