@@ -16,8 +16,8 @@ from Classes.modifier import Modifier
 
 #load_dotenv()
 
-#my_secret = os.environ.get("TOKEN")
-my_secret = os.getenv("TOKEN")
+my_secret = os.environ.get("TOKEN")
+#my_secret = os.getenv("TOKEN")
 client = commands.Bot(command_prefix='!',description='Now with more moreness!', case_insensitive=True)
 base_url = 'http://roll.diceapi.com/json/'
 
