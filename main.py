@@ -103,6 +103,7 @@ def modify(sign,modifier,value) -> int:
   return modifier + value if sign == '+' else modifier - value
     
 def build_modified_string(originals,sign,value):
+  print(originals)
   explanation = ""
   flat_list = list(chain.from_iterable(originals))
   for i in flat_list:
