@@ -106,5 +106,6 @@ def build_modified_string(originals,sign,value):
   flat_list = list(chain.from_iterable(originals))
   for i in flat_list:
     explanation += f"{i} {sign} {str(value)} "
+  return explanation
 
 client.run(my_secret)
