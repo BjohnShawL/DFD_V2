@@ -103,7 +103,7 @@ def roll_dice(url):
       return result
 
 def modify(sign,modifier,value) -> int:
-  return modifier + value if sign == '+' else modifier - value
+  return modifier + value if sign == '+' else value - modifier
     
 def build_modified_string(originals,sign,value):
   #print(originals)
