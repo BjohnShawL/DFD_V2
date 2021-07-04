@@ -55,7 +55,7 @@ async def roll(ctx,*args):
   
   for i,v in enumerate(dice):
     results= []
-    endSlice = i+int(v[0:v.index('d')]) if int(v[0]) <= len(msg['dice']) -1 else int(v[0]) + 1 #this allows us to get all the results from the dice pool
+    endSlice = i+int(v[0:v.lower().index('d')]) if int(v[0]) <= len(msg['dice']) -1 else int(v[0]) + 1 #this allows us to get all the results from the dice pool
     results.append(val[i:endSlice])
     d_roll = DiceRoll(v[0],results)
 
