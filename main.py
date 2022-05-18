@@ -1,50 +1,103 @@
 import discord
 import os
-import urllib.request
 import json
 import sys
 import re
+
+from discord.flags import Intents
+from dataclasses import asdict
+import requests
 
 sys.path.append('Classes')
 from itertools import chain
 from discord.ext import commands
 from dotenv import load_dotenv
-from Classes.roll import DiceRoll
+from Classes.roll import DiceRoll, Roll
 from Classes.modifier import Modifier
+from Classes.actions import single_roll, multi_roll
 
-#load_dotenv()
+load_dotenv()
 
-my_secret = os.environ.get("TOKEN")
-#my_secret = os.getenv("TOKEN")
-client = commands.Bot(command_prefix='!',description='Now with more moreness!', case_insensitive=True)
-base_url = 'http://roll.diceapi.com/json/'
+#my_secret = os.environ.get("TOKEN")
+INTENTS = discord.Intents.default()
+my_secret = os.getenv("TOKEN")
 
+client = commands.Bot(command_prefix='!',description='Now with more moreness!', case_insensitive=True, intents=INTENTS)
+base_url = 'http://localhost:7071/api/roll'
+#base_url = os.getenv("BASE_URL")
 
 @client.event
 async def on_ready():
   channelName = client.guilds
   print(f"Hello world! Looks like I've woken up in {channelName[0]}")
 
+@client.event
+async def on_voice_state_update(member, before, after):
+  debugger = "debug"
+  # = client.get_role('conference_speaker')
+  await print("role")
+  # if role in member.roles :
+  #   if before.voice.self_mute == True and after.voice.self_mute == False:
+  #     print("conference_user talking")
+  #   elif before.voice.self_mute == False and after.voice.self_mute == True:
+  #     print("conference_user no longer talking")
+
+
 @client.command()
 async def sum_up(ctx, *args):
   await ctx.send(f"{sum(list(map(int,args)))}")
 
 @client.command()
+async def batch(ctx,*args):
+  await multi_roll(base_url,ctx,*args)
+
+
+@client.command()
 async def roll(ctx,*args):
-  dice = []
+  dice = [] # this becomes a list of tuples with the batch pairings
   bonuses = []
   arguments = [*args]
-  is_sum = determine_if_sum(arguments)
-  if is_sum: 
-    for i,a in enumerate(arguments):
-      res = a.translate({ord(x): None for x in '()'})
-      arguments[i] = res
-  for v in arguments:
-    if str(v[0]) == '+' or str(v[0]) =='-':
-      bonuses.append(Modifier(str(v[0]),int(v[1:])))
-    else:
-      dice.append(v)
-  msg = create_url(dice)
+  is_sum = determine_if_sum(arguments) # this can stay - we still want the sum functionality in, but we're going to simply return the Sum attr of the response from the api
+  # if is_sum: 
+  #   for i,a in enumerate(arguments):
+  #     res = a.translate({ord(x): None for x in '()'})
+  #     arguments[i] = res
+  
+  def handle_args(args):
+    for i, v in enumerate(args):
+        if str(v[0]) not in ['+', '-']:
+            print(v[0])
+            dice.append([v])
+        else:
+            try:
+                if len(dice[-1]) > 1:
+                    raise
+                dice[-1].append(v)
+            except:
+                print("You have a modifier without a roll")
+
+  handle_args(arguments)
+
+  message_body={"dice":[]}
+
+  def build_dice_list(batch):
+    pattern = re.compile('([-|+])')
+    quantity, sides =[int(x) for x in str.upper(batch[0]).split('D')]
+    _, sign, mod = re.split(pattern, batch[1])
+    neg = True if sign == '-' else False 
+    roll = Roll(
+    quantity,sides,int(mod),neg
+    )
+    b = asdict(roll)
+    message_body['dice'].append(b)
+
+  for roll in dice:
+    build_dice_list(roll)
+
+  response = requests.post(url=base_url,json=message_body).json()
+
+  
+
   username = ctx.author.display_name
   val=[]
   for v in msg['dice'] :
@@ -105,9 +158,13 @@ def create_url(arg_array):
     result = roll_dice(base_url + url_path)
     return result
 
+def roll_dice_update(url):
+  # change this to use the requests library
+  pass
 
 def roll_dice(url):
    with urllib.request.urlopen(url) as r:
+      response = r.read()
       result = json.loads(r.read().decode(r.headers.get_content_charset('utf-8')))
       return result
 

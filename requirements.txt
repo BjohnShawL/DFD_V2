@@ -14,8 +14,10 @@ mccabe==0.6.1
 multidict==5.1.0
 pylint==2.6.0
 python-dotenv==0.17.1
+requests==2.26.0
 toml==0.10.2
 typing-extensions==3.10.0.0
 wincertstore==0.2
 wrapt==1.12.1
 yarl==1.6.3
+requests
