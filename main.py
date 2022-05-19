@@ -70,18 +70,21 @@ async def roll(ctx,*args):
     b = asdict(roll)
     message_body['dice'].append(b)
 
-  for roll in dice:
-    build_dice_list(roll)
+  username = ctx.author.display_name
+  results_embed = discord.Embed()
+  results_embed.set_author(name=f"-- {username} has rolled the dice! --")
 
+  try:
+    for roll in dice:
+      build_dice_list(roll)
+  except (ValueError, TypeError):
+    results_embed.add_field(name="Buuuuuut...", value="something went wrong - please check what you're rolling")
   response = requests.post(url=base_url,json=message_body).json()
 
   
 
-  username = ctx.author.display_name
   val=[]
 
-  results_embed = discord.Embed()
-  results_embed.set_author(name=f"-- {username} has rolled the dice! --")
 
 
   for i,v in enumerate(response):
