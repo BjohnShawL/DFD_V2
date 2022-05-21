@@ -12,9 +12,8 @@ sys.path.append('Classes')
 from itertools import chain
 from discord.ext import commands
 from dotenv import load_dotenv
-from Classes.roll import DiceRoll, Roll
-from Classes.modifier import Modifier
-from Classes.actions import single_roll, multi_roll
+from Classes.roll import Roll
+
 
 load_dotenv()
 
@@ -23,8 +22,8 @@ INTENTS = discord.Intents.default()
 my_secret = os.getenv("TOKEN")
 
 client = commands.Bot(command_prefix='!',description='Now with more moreness!', case_insensitive=True, intents=INTENTS)
-base_url = 'http://localhost:7071/api/roll'
-#base_url = os.getenv("BASE_URL")
+#base_url = 'http://localhost:7071/api/roll'
+base_url = os.getenv("BASE_URL")
 
 @client.event
 async def on_ready():
