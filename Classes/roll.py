@@ -1,4 +1,5 @@
 from itertools import chain
+from dataclasses import dataclass
 
 class DiceRoll:
     def __init__(self,num_of_dice,values) :
@@ -11,4 +12,10 @@ class DiceRoll:
         self.val_string = " ,".join(str(e) for e in list(chain.from_iterable(self.values)))
 
     def list_copy(self,l):
-        return l[:] 
+        return l[:]
+@dataclass
+class Roll:
+    number : int = 1
+    sides :int = 6
+    mod : int = 0
+    neg : bool = False
