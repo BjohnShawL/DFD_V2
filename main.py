@@ -22,8 +22,8 @@ INTENTS = discord.Intents.default()
 my_secret = os.getenv("TOKEN")
 
 client = commands.Bot(command_prefix='!',description='Now with more moreness!', case_insensitive=True, intents=INTENTS)
-#base_url = 'http://localhost:7071/api/roll'
-base_url = os.getenv("BASE_URL")
+base_url = 'http://localhost:7071/api/roll'
+#base_url = os.getenv("BASE_URL")
 
 @client.event
 async def on_ready():
@@ -78,6 +78,7 @@ async def roll(ctx,*args):
       build_dice_list(roll)
   except (ValueError, TypeError):
     results_embed.add_field(name="Buuuuuut...", value="something went wrong - please check what you're rolling")
+    await ctx.send(embed=results_embed)
   response = requests.post(url=base_url,json=message_body).json()
 
   
@@ -92,7 +93,7 @@ async def roll(ctx,*args):
     if is_sum:
       val = f"Total = {v['sum']} "
     else:
-      totals = [sum([int(total) for total in detail.split('+')]) for detail in v['detail']]
+      totals = v["results"]
       val = f" Result = {v['sum']}" if len(v['detail']) == 1 else f"{' , '.join([str(t) for t in totals])}"
       if is_modified:
         val += f" : ({', '.join([d for d in v['detail']])})"
